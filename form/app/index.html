@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ESA Client Onboarding</title>
+<style>
+  :root{
+    --bg:#0f1115; --card:#171a21; --fg:#f3f5f7; --muted:#9aa3b2;
+    --accent:#ff5a3c; --accent-2:#ff7a5c; --line:#262b35; --ok:#27c093;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--fg)}
+  #progress{position:fixed;top:0;left:0;height:5px;background:linear-gradient(90deg,var(--accent),var(--accent-2));width:0;transition:width .3s ease;z-index:10}
+  .wrap{max-width:720px;margin:0 auto;min-height:100%;display:flex;flex-direction:column;justify-content:center;padding:32px 24px 120px}
+  .eyebrow{color:var(--accent);font-weight:700;letter-spacing:.05em;text-transform:uppercase;font-size:13px;margin-bottom:14px}
+  .qnum{color:var(--muted);font-size:14px;margin-bottom:8px}
+  h1.q{font-size:30px;line-height:1.25;margin:0 0 8px}
+  .help{color:var(--muted);font-size:16px;margin:6px 0 22px;font-style:italic}
+  .req{color:var(--accent);font-weight:700}
+  input[type=text],input[type=email],input[type=tel],input[type=url],input[type=number],input[type=date],textarea{
+    width:100%;background:var(--card);border:2px solid var(--line);color:var(--fg);
+    font-size:18px;padding:16px;border-radius:12px;outline:none;transition:border .2s}
+  input:focus,textarea:focus{border-color:var(--accent)}
+  textarea{min-height:140px;resize:vertical;line-height:1.5}
+  .choices{display:flex;flex-wrap:wrap;gap:10px}
+  .choice{background:var(--card);border:2px solid var(--line);color:var(--fg);font-size:17px;
+    padding:14px 20px;border-radius:12px;cursor:pointer;transition:all .15s}
+  .choice:hover{border-color:var(--accent)}
+  .choice.sel{border-color:var(--accent);background:rgba(255,90,60,.12)}
+  .nav{display:flex;align-items:center;gap:14px;margin-top:26px}
+  button.go{background:var(--accent);color:#fff;border:none;font-size:17px;font-weight:700;
+    padding:14px 26px;border-radius:12px;cursor:pointer}
+  button.go:hover{background:var(--accent-2)}
+  button.ghost{background:transparent;border:none;color:var(--muted);font-size:15px;cursor:pointer}
+  .enter-hint{color:var(--muted);font-size:13px}
+  .save-note{position:fixed;bottom:16px;left:0;right:0;text-align:center;color:var(--muted);font-size:13px}
+  .footer-sec{position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:1px solid var(--line);
+    padding:10px 24px;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--muted)}
+  /* intro + done screens */
+  .center h1{font-size:34px;margin:0 0 14px}
+  .center p{color:var(--muted);font-size:18px;line-height:1.5;max-width:560px}
+  .pill{display:inline-block;background:rgba(39,192,147,.15);color:var(--ok);padding:4px 12px;border-radius:999px;font-size:13px;font-weight:700;margin-bottom:18px}
+  a.link{color:var(--accent)}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+<div class="footer-sec">
+  <span>ESA Client Onboarding</span>
+  <span id="counter"></span>
+</div>
+<div class="wrap" id="screen"></div>
+<div class="save-note" id="saveNote"></div>
+
+<script>
+/* ====== CONFIG ======
+   When the Google Sheet backend is ready, paste its web-app URL here.
+   Until then, answers save in the browser and can be downloaded as a file. */
+const SUBMIT_ENDPOINT = ""; // e.g. "https://script.google.com/macros/s/XXXX/exec"
+
+/* ====== QUESTIONS (all 68) ======
+   type: text | email | tel | url | number | date | textarea | choice
+   For choice, provide options[]. */
+const SECTIONS = {
+  basic:"Basic info", event:"Your event", team:"Team & roles",
+  customer:"Ideal customer & sales", status:"Current status", offer:"Offer & pricing",
+  marketing:"Marketing & data", payment:"Payment & data flow", messaging:"Messaging setup",
+  questionnaire:"Marketing questionnaire", brandstory:"Brand positioning", brandsnap:"Brand & competitors",
+  audience:"Your audience (the 10 that matter most)"
+};
+const Q = [
+  // 1) Basic
+  {k:"full_name", s:"basic", q:"What's your full name?", t:"text", req:true},
+  {k:"email", s:"basic", q:"Best email to reach you?", t:"email", req:true},
+  {k:"phone", s:"basic", q:"Best phone number?", t:"tel", req:true},
+  {k:"company_name", s:"basic", q:"Company / organization name?", t:"text", req:true},
+  // 2) Event
+  {k:"event_name", s:"event", q:"What's the event name?", t:"text", req:true},
+  {k:"website", s:"event", q:"Your website?", t:"url"},
+  {k:"event_location", s:"event", q:"Event location?", t:"text", req:true, help:"City/venue, or “online”"},
+  {k:"event_date", s:"event", q:"Event date?", t:"date", req:true},
+  {k:"target_attendees", s:"event", q:"How many attendees do you want?", t:"number", req:true, help:"Your fill goal"},
+  {k:"is_first_event", s:"event", q:"Is this your first event?", t:"choice", options:["Yes","No"]},
+  {k:"main_speakers", s:"event", q:"Main speaker(s)?", t:"textarea", help:"Name + one line on each"},
+  // 3) Team
+  {k:"team_roles", s:"team", q:"Name and role of each team member helping with this event?", t:"textarea"},
+  {k:"outbound_calls", s:"team", q:"Is your team going to make outbound calls?", t:"choice", options:["Yes","No"]},
+  {k:"reps_day_of", s:"team", q:"How many reps will you have day-of to sell your high-ticket offer at the event?", t:"number"},
+  {k:"internal_marketing_person", s:"team", q:"Do you have an internal marketing or data-tracking person?", t:"choice", options:["Yes","No"]},
+  // 4) Ideal customer & sales process
+  {k:"lead_qualification", s:"customer", q:"How do you qualify leads?", t:"textarea"},
+  {k:"ideal_customer", s:"customer", q:"Who is your ideal customer?", t:"textarea"},
+  {k:"current_sales_process", s:"customer", q:"What is your current sales process?", t:"textarea"},
+  {k:"lead_contact_speed", s:"customer", q:"How long before leads are contacted after opt-in?", t:"text"},
+  {k:"ticket_price_overview", s:"customer", q:"Overview of ticket prices?", t:"text", req:true},
+  // 5) Current status
+  {k:"tickets_sold_so_far", s:"status", q:"How many tickets sold so far, and where did they come from?", t:"textarea"},
+  {k:"interested_leads_count", s:"status", q:"How many leads are interested in this event?", t:"number"},
+  {k:"ticket_sales_tracking", s:"status", q:"How are you currently tracking ticket sales?", t:"textarea"},
+  // 6) Offer & pricing
+  {k:"has_event_offer", s:"offer", q:"Will you have an offer at the event?", t:"choice", options:["Yes","No"], req:true},
+  {k:"event_offer_price", s:"offer", q:"If yes, how much will that offer be?", t:"text"},
+  // 7) Marketing & data strategy
+  {k:"ad_spend", s:"marketing", q:"How much is allocated for ad spend?", t:"text", req:true},
+  {k:"speakers_promoting", s:"marketing", q:"Are speakers helping promote the event?", t:"choice", options:["Yes","No"]},
+  {k:"ad_creatives_folder", s:"marketing", q:"Do you have all ad creatives in one folder? (paste link, or “No”)", t:"text"},
+  {k:"ad_set_types", s:"marketing", q:"Current ad sets are static images, video, or both?", t:"choice", options:["Static images","Video","Both","None yet"]},
+  {k:"sms_email_strategy", s:"marketing", q:"Do you have a current SMS and email strategy in place?", t:"textarea"},
+  {k:"crm", s:"marketing", q:"What CRM do you currently use?", t:"text", req:true, help:"e.g. GoHighLevel, ActiveCampaign, HubSpot"},
+  // 8) Payment & data flow
+  {k:"payment_processor", s:"payment", q:"What is your payment processor?", t:"text"},
+  {k:"post_register_flow", s:"payment", q:"Where does your information go after someone registers?", t:"textarea"},
+  {k:"ticket_auto_sent", s:"payment", q:"Is the ticket/invoice sent automatically, or is there another step?", t:"textarea"},
+  // 9) Messaging setup
+  {k:"a2p_registered", s:"messaging", q:"Have you registered for A2P 10DLC?", t:"choice", options:["Yes","No","Not sure"]},
+  {k:"sending_domain", s:"messaging", q:"Which email domain will you use for sending?", t:"text"},
+  {k:"domain_verified", s:"messaging", q:"Is your sending domain set up and verified?", t:"choice", options:["Yes","No","Not sure"]},
+  {k:"old_leads", s:"messaging", q:"Do you have old leads to import/target?", t:"choice", options:["Yes","No"]},
+  {k:"old_leads_count", s:"messaging", q:"If yes, approximately how many old leads?", t:"number"},
+  {k:"old_leads_segmented", s:"messaging", q:"Are old leads segmented or all in one list?", t:"choice", options:["Segmented","One list","Not sure"]},
+  // 10) Marketing questionnaire
+  {k:"clients_top_goal", s:"questionnaire", q:"What is the number one most important thing your clients want to accomplish?", t:"textarea"},
+  {k:"what_you_do", s:"questionnaire", q:"In one sentence, describe what you do for your clients.", t:"text"},
+  {k:"products_standout", s:"questionnaire", q:"What products/services do you offer, and how do they stand out?", t:"textarea"},
+  // 11) Brand positioning & story
+  {k:"competitive_advantage", s:"brandstory", q:"Your single most competitive advantage?", t:"textarea"},
+  {k:"audience_reach_challenges", s:"brandstory", q:"Challenges reaching your target audience effectively?", t:"textarea"},
+  {k:"founder_story", s:"brandstory", q:"What painful life situation made you want to change?", t:"textarea"},
+  // 12) Brand & competitor snapshot
+  {k:"logo_link", s:"brandsnap", q:"Logo file link (Google Drive/Dropbox URL)?", t:"url"},
+  {k:"brand_color_primary", s:"brandsnap", q:"Primary brand color (HEX)?", t:"text"},
+  {k:"brand_color_secondary", s:"brandsnap", q:"Secondary brand color (HEX)?", t:"text"},
+  {k:"brand_color_accent", s:"brandsnap", q:"Accent color (HEX, optional)?", t:"text"},
+  {k:"brand_fonts", s:"brandsnap", q:"Brand fonts (if any)?", t:"text"},
+  {k:"competitor_1", s:"brandsnap", q:"Competitor website 1?", t:"url"},
+  {k:"competitor_2", s:"brandsnap", q:"Competitor website 2?", t:"url"},
+  {k:"competitor_3", s:"brandsnap", q:"Competitor website 3?", t:"url"},
+  {k:"competitor_likes", s:"brandsnap", q:"What do you like most about competitor marketing?", t:"textarea"},
+  {k:"competitor_avoid", s:"brandsnap", q:"What should we avoid copying from competitors?", t:"textarea"},
+  {k:"media_folder", s:"brandsnap", q:"Approved media asset folder link?", t:"url"},
+  {k:"final_approver", s:"brandsnap", q:"Final approver for ads/funnels/copy + approval speed?", t:"text"},
+  // 13) Audience deep-dive (the 10 keystone)
+  {k:"aud_ideal", s:"audience", q:"Who is the ideal person who should buy a ticket?", t:"textarea", req:true, help:"The avatar. Be specific, not “everyone.”"},
+  {k:"aud_demographics", s:"audience", q:"Age range, gender split, and where they live?", t:"text", help:"The hard demographics every profile needs."},
+  {k:"aud_problem", s:"audience", q:"What is the #1 problem they're struggling with right now?", t:"textarea", req:true, help:"The pain everything leads with."},
+  {k:"aud_quotes", s:"audience", q:"Paste 5–10 real things your customers have actually said.", t:"textarea", req:true, help:"The keystone. Leave their exact words, slang, and typos in. This becomes the ad copy."},
+  {k:"aud_desire", s:"audience", q:"What do they really want underneath that, and who do they want to become?", t:"textarea", help:"Identity-level desire, not just “more money.”"},
+  {k:"aud_objections", s:"audience", q:"Top reasons they hesitate or don't buy, and the real fear under each?", t:"textarea", help:"Objections, decoded."},
+  {k:"aud_avoid", s:"audience", q:"What words, phrases, or vibes instantly turn them off or feel fake?", t:"textarea", req:true, help:"The avoid-list."},
+  {k:"aud_not_fit", s:"audience", q:"Who is NOT a good fit / who don't you want in the room?", t:"textarea", req:true, help:"Protects ad spend + call quality."},
+  {k:"aud_tiers", s:"audience", q:"Do different types of people buy different ticket tiers? Describe each.", t:"textarea", help:"Decides whether we build one avatar or four."},
+  {k:"aud_why_you", s:"audience", q:"In one sentence: why do customers choose YOU, and the one transformation you deliver?", t:"textarea"},
+];
+
+/* ====== STATE ====== */
+const params = new URLSearchParams(location.search);
+let clientId = params.get("clientId");
+if(!clientId){ clientId = "c-" + Math.abs(Date.now()).toString(36) + Math.floor(performance.now()).toString(36); }
+const STORE_KEY = "esa_onboarding_" + clientId;
+let answers = {};
+try{ answers = JSON.parse(localStorage.getItem(STORE_KEY)) || {}; }catch(e){ answers = {}; }
+let idx = answers.__lastIndex || -1; // -1 = intro screen
+
+const screen = document.getElementById("screen");
+const progress = document.getElementById("progress");
+const counter = document.getElementById("counter");
+const saveNote = document.getElementById("saveNote");
+
+function save(){ answers.__lastIndex = idx; localStorage.setItem(STORE_KEY, JSON.stringify(answers));
+  saveNote.textContent = "✓ Progress saved — you can close this and come back anytime."; }
+
+function setProgress(){
+  const pct = idx < 0 ? 0 : Math.round(((idx) / Q.length) * 100);
+  progress.style.width = pct + "%";
+  counter.textContent = idx < 0 ? "" : (idx+1) + " / " + Q.length;
+}
+
+function renderIntro(){
+  setProgress();
+  const resuming = Object.keys(answers).filter(k=>k[0]!=="_").length > 0;
+  screen.innerHTML = `<div class="center">
+    <div class="pill">~10–15 min · progress saves automatically</div>
+    <h1>ESA Client Onboarding</h1>
+    <p>The more complete your answers, the faster we can launch your funnel, ads, and follow-up systems. You can stop anytime and pick up right where you left off.</p>
+    <div class="nav"><button class="go" id="start">${resuming?"Resume →":"Start →"}</button></div>
+  </div>`;
+  document.getElementById("start").onclick = ()=>{ idx = resuming ? (answers.__lastIndex||0) : 0; render(); };
+}
+
+function render(){
+  if(idx < 0) return renderIntro();
+  if(idx >= Q.length) return renderDone();
+  const item = Q[idx];
+  setProgress();
+  const val = answers[item.k] || "";
+  let field = "";
+  if(item.t === "textarea"){
+    field = `<textarea id="f" placeholder="Type your answer here...">${escapeHtml(val)}</textarea>`;
+  } else if(item.t === "choice"){
+    field = `<div class="choices">` + item.options.map(o=>
+      `<div class="choice ${val===o?"sel":""}" data-v="${escapeAttr(o)}">${escapeHtml(o)}</div>`).join("") + `</div>`;
+  } else {
+    field = `<input id="f" type="${item.t}" value="${escapeAttr(val)}" placeholder="Type your answer here..." />`;
+  }
+  screen.innerHTML = `
+    <div class="eyebrow">${SECTIONS[item.s]||""}</div>
+    <div class="qnum">Question ${idx+1} of ${Q.length}</div>
+    <h1 class="q">${escapeHtml(item.q)} ${item.req?'<span class="req">*</span>':''}</h1>
+    ${item.help?`<div class="help">${escapeHtml(item.help)}</div>`:""}
+    ${field}
+    <div class="nav">
+      <button class="go" id="next">OK →</button>
+      ${idx>0?'<button class="ghost" id="back">↑ Back</button>':''}
+      <span class="enter-hint">${item.t==="textarea"?"Shift+Enter for new line":"press Enter ↵"}</span>
+    </div>`;
+
+  const f = document.getElementById("f");
+  if(f){ f.focus(); if(f.setSelectionRange && val){ try{f.setSelectionRange(val.length,val.length);}catch(e){} } }
+  if(item.t==="choice"){
+    [...document.querySelectorAll(".choice")].forEach(c=>c.onclick=()=>{
+      answers[item.k]=c.getAttribute("data-v"); save(); next();
+    });
+  }
+  document.getElementById("next").onclick = ()=>commit(true);
+  const back = document.getElementById("back"); if(back) back.onclick = ()=>{ commit(false); idx--; render(); };
+
+  document.onkeydown = (e)=>{
+    if(e.key==="Enter" && !(item.t==="textarea" && e.shiftKey)){
+      if(item.t!=="textarea" || !e.shiftKey){ e.preventDefault(); commit(true); }
+    }
+  };
+}
+
+function commit(advance){
+  const item = Q[idx];
+  const f = document.getElementById("f");
+  if(f) answers[item.k] = f.value.trim();
+  if(advance){
+    if(item.req && !(answers[item.k]||"").length){
+      if(f){ f.style.borderColor = "#ff3b30"; f.focus(); }
+      saveNote.textContent = "This one's required — please add an answer.";
+      return;
+    }
+    save(); next();
+  } else { save(); }
+}
+function next(){ idx++; save(); render(); }
+
+function renderDone(){
+  progress.style.width="100%"; counter.textContent="Done";
+  const filled = Object.keys(answers).filter(k=>k[0]!=="_" && (answers[k]||"").length).length;
+  screen.innerHTML = `<div class="center">
+    <div class="pill">All set</div>
+    <h1>Thank you — you're done! 🎉</h1>
+    <p>You answered ${filled} of ${Q.length} questions. Our team will take it from here and start building your launch. We'll be in touch shortly.</p>
+    <div class="nav">
+      <button class="go" id="submit">Submit my answers</button>
+      <button class="ghost" id="review">↑ Review answers</button>
+    </div>
+    <p id="status" style="margin-top:18px"></p>
+  </div>`;
+  document.getElementById("review").onclick=()=>{ idx=0; render(); };
+  document.getElementById("submit").onclick=submitAll;
+}
+
+async function submitAll(){
+  const status = document.getElementById("status");
+  const payload = {clientId, submittedAt: new Date().toISOString(), answers:
+    Object.fromEntries(Object.entries(answers).filter(([k])=>k[0]!=="_"))};
+  if(!SUBMIT_ENDPOINT){
+    // No backend yet: let them download their answers so nothing is lost.
+    const blob = new Blob([JSON.stringify(payload,null,2)],{type:"application/json"});
+    const a=document.createElement("a"); a.href=URL.createObjectURL(blob);
+    a.download = "esa-onboarding-"+clientId+".json"; a.click();
+    status.innerHTML = "Saved locally and downloaded a copy. <br/>(Backend not connected yet — once it is, this button sends straight to the team.)";
+    return;
+  }
+  status.textContent = "Submitting...";
+  try{
+    await fetch(SUBMIT_ENDPOINT,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
+    status.textContent = "✓ Submitted. Thank you!";
+  }catch(e){ status.textContent = "Couldn't reach the server — your answers are saved locally; please try again."; }
+}
+
+function escapeHtml(s){return (s+"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+function escapeAttr(s){return escapeHtml(s).replace(/'/g,"&#39;");}
+
+render();
+</script>
+</body>
+</html>
