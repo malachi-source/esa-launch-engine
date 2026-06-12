@@ -1,0 +1,9 @@
+{
+  "name": "esa-onboarding-form",
+  "version": "1.0.0",
+  "private": true,
+  "description": "ESA client onboarding form + Supabase submit function",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.45.0"
+  }
+}
