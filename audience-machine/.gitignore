@@ -1,0 +1,11 @@
+# Per-run summaries (regenerated each run; can contain client specifics)
+output/*.md
+
+# Local Python virtual environment
+.venv/
+
+# Real client CSV exports (PII - never commit)
+data/
+
+# Never commit a real client's filled-in config by accident? Keep them, but
+# NEVER put a token in a file. The token only lives in your shell env var.

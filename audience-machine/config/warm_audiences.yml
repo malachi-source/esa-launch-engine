@@ -1,0 +1,256 @@
+# =============================================================================
+# THE MASTER AUDIENCE STACK  (single source of truth for EVERY client)
+# =============================================================================
+# This file says WHAT gets built. The per-client files (config/clients/*.yml)
+# say WHO it gets built for (their account IDs + interests).
+#
+# If Meta rejects an audience, you almost never touch the Python. You fix the
+# one line here (usually the `event:` string) and re-run. Re-runs are safe:
+# anything that already exists is skipped.
+#
+# FIELD GUIDE (per warm audience):
+#   name          What it's called inside Meta. Keep the "ESA - ..." prefix so
+#                 we can spot our audiences and so re-runs skip-by-name.
+#   kind          engagement | website | contact_list  (how Meta builds it)
+#   source_type   for engagement: page | ig_business | video
+#                 (the kind of "thing" people engaged with)
+#   object        which of the client's IDs to plug in as that thing:
+#                 page | ig | pixel   (resolved per-client at run time)
+#   event         the Meta engagement event string. THE thing most likely to
+#                 need a fix on the first live run. Omit for "all visitors".
+#   retention_days how far back to look. 365 = past year (Meta's max for most;
+#                 website is capped at 180 and the tool clamps it for you).
+#   lal_seed      true  -> also build a 1% Lookalike from this audience
+#   in_rollup     false -> keep OUT of the "ALL Warm Audiences" saved audience
+#                 (defaults to true). Used for seed-only audiences.
+#   verified      false -> Meta event name is a best guess, expect the first
+#                 live run to confirm or reject it. true -> checked vs docs.
+#   manual        true  -> no public API exists; the tool tells you to create
+#                 this one by hand once, then its lookalike builds next run.
+# =============================================================================
+
+settings:
+  retention_days_default: 365
+  website_retention_cap_days: 180   # Meta hard limit; tool clamps automatically
+  lookalike_ratio: 0.01             # 1% lookalikes
+  # country for lookalikes + saved audiences comes from each client file
+
+warm_audiences:
+
+  # ---- FACEBOOK PAGE (6 in the warm rollup) --------------------------------
+  - name: "ESA - Engaged with Page Past Year"
+    kind: engagement
+    source_type: page
+    object: page
+    event: page_engaged
+    retention_days: 365
+    lal_seed: false
+    verified: true
+
+  - name: "ESA - Visited Page Past Year"
+    kind: engagement
+    source_type: page
+    object: page
+    event: page_visited
+    retention_days: 365
+    lal_seed: false
+    verified: true
+
+  - name: "ESA - Clicked CTA Buttons Past Year"
+    kind: engagement
+    source_type: page
+    object: page
+    event: page_cta_clicked
+    retention_days: 365
+    lal_seed: true
+    verified: true
+
+  - name: "ESA - Messaged Page Past Year"
+    kind: engagement
+    source_type: page
+    object: page
+    event: page_messaged
+    retention_days: 365
+    lal_seed: true
+    verified: true
+
+  - name: "ESA - Saved Page Posts Past Year"
+    kind: engagement
+    source_type: page
+    object: page
+    event: page_or_post_save
+    retention_days: 365
+    lal_seed: false
+    verified: true
+
+  - name: "ESA - Interacted with Video Ad or Reel Past Year"
+    kind: engagement
+    source_type: page
+    object: page
+    event: page_video_engaged
+    retention_days: 365
+    lal_seed: true
+    manual: true        # no reliable public API event; create once by hand
+    verified: false
+
+  # ---- FB PAGE LIKES (lookalike SEED only, NOT in the warm rollup) ----------
+  - name: "ESA - FB Page Likes (Seed)"
+    kind: engagement
+    source_type: page
+    object: page
+    event: page_liked
+    retention_days: 365
+    lal_seed: true
+    in_rollup: false
+    verified: true
+
+  # ---- INSTAGRAM (6) -------------------------------------------------------
+  # IG event names are best-known guesses. The first live run confirms them;
+  # any that fail get fixed right here, one line each.
+  - name: "ESA - IG Started Following Past Year"
+    kind: engagement
+    source_type: ig_business
+    object: ig
+    event: ig_business_profile_follow
+    retention_days: 365
+    lal_seed: true
+    verified: false
+
+  - name: "ESA - IG Engaged (All) Past Year"
+    kind: engagement
+    source_type: ig_business
+    object: ig
+    event: ig_business_profile_engaged
+    retention_days: 365
+    lal_seed: false
+    verified: false
+
+  - name: "ESA - IG Visited Profile Past Year"
+    kind: engagement
+    source_type: ig_business
+    object: ig
+    event: ig_business_profile_visited
+    retention_days: 365
+    lal_seed: false
+    verified: false
+
+  - name: "ESA - IG Engaged with Post or Ad Past Year"
+    kind: engagement
+    source_type: ig_business
+    object: ig
+    event: ig_business_profile_ad_or_post_engagement
+    retention_days: 365
+    lal_seed: true
+    verified: false
+
+  - name: "ESA - IG Sent DM Past Year"
+    kind: engagement
+    source_type: ig_business
+    object: ig
+    event: ig_business_profile_messaged
+    retention_days: 365
+    lal_seed: true
+    verified: false
+
+  - name: "ESA - IG Saved or Liked Past Year"
+    kind: engagement
+    source_type: ig_business
+    object: ig
+    event: ig_business_profile_saved
+    retention_days: 365
+    lal_seed: true
+    verified: false
+
+  # ---- VIDEO VIEWERS (5) - ALL videos --------------------------------------
+  # Video % event names are best-effort pending the first live run.
+  - name: "ESA - Watched 3 Sec Past Year"
+    kind: engagement
+    source_type: video
+    object: page
+    event: video_view_3_sec
+    retention_days: 365
+    lal_seed: false
+    verified: false
+
+  - name: "ESA - Watched 25% Past Year"
+    kind: engagement
+    source_type: video
+    object: page
+    event: video_view_25_percent
+    retention_days: 365
+    lal_seed: false
+    verified: false
+
+  - name: "ESA - Watched 50% Past Year"
+    kind: engagement
+    source_type: video
+    object: page
+    event: video_view_50_percent
+    retention_days: 365
+    lal_seed: true
+    verified: false
+
+  - name: "ESA - Watched 75% Past Year"
+    kind: engagement
+    source_type: video
+    object: page
+    event: video_view_75_percent
+    retention_days: 365
+    lal_seed: true
+    verified: false
+
+  - name: "ESA - Watched 95% Past Year"
+    kind: engagement
+    source_type: video
+    object: page
+    event: video_view_95_percent
+    retention_days: 365
+    lal_seed: true
+    verified: false
+
+  # ---- WEBSITE (1) - capped at 180 days by Meta ----------------------------
+  - name: "ESA - All Website Visitors"
+    kind: website
+    source_type: pixel
+    object: pixel
+    event: null            # no event = ALL visitors
+    retention_days: 180
+    lal_seed: false
+    verified: true
+
+  # ---- CONTACT LISTS (2) - from CSV exports, hashed on upload --------------
+  # Only built if the client file points csv_ghl_leads / csv_past_customers
+  # at a real file. Otherwise skipped with a note.
+  - name: "ESA - All GHL Leads"
+    kind: contact_list
+    csv: ghl_leads          # which client csv path to use
+    retention_days: 365
+    lal_seed: true
+    verified: true
+
+  - name: "ESA - All Past Customers"
+    kind: contact_list
+    csv: past_customers
+    retention_days: 365
+    lal_seed: true
+    verified: true
+
+# -----------------------------------------------------------------------------
+# SAVED ROLLUPS - "bundle" saved audiences that point at the customs above
+# -----------------------------------------------------------------------------
+rollups:
+  - name: "ESA - ALL Warm Audiences"
+    includes: warm        # every warm custom audience with in_rollup != false
+  - name: "ESA - All Top Lookalikes"
+    includes: lookalikes  # every 1% lookalike built this run
+
+# -----------------------------------------------------------------------------
+# COLD + BROAD - saved (interest/open) audiences, built from the client file
+# -----------------------------------------------------------------------------
+saved_audiences:
+  cold:
+    name: "ESA - {client} - Interests-Based Cold Audience"
+    # interests come from the client file (Target Audience Profile, section 13)
+  broad:
+    name: "ESA - {client} - Broad Open Audience"
+    # no interests, let Meta find people

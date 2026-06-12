@@ -1,0 +1,46 @@
+# =============================================================================
+# PER-CLIENT CONFIG  (copy this file, rename it, fill it in)
+# =============================================================================
+# To onboard a client:
+#   1. cp config/clients/example-client.yml config/clients/acme.yml
+#   2. Fill in the 5 IDs below + the cold interests
+#   3. python create_audiences.py config/clients/acme.yml --dry-run
+#   4. python create_audiences.py config/clients/acme.yml
+#
+# Where the IDs come from: after the client grants ESA partner access AND you
+# assign their assets to the system user (see TOKEN_SETUP.md), all of these
+# are visible in Meta Business Settings / Ads Manager.
+# =============================================================================
+
+name: "Example Client"        # used in audience names + the summary file
+slug: "example-client"        # used for the output filename (no spaces)
+country: "US"                 # 2-letter country for lookalikes + saved audiences
+
+# ---- The 5 Meta IDs (numbers only, no "act_" prefix needed) ----------------
+ad_account_id: "000000000000" # Ad account (Business Settings > Accounts > Ad accounts)
+page_id: "000000000000"       # Facebook Page ID
+ig_id: "000000000000"         # Instagram account ID (the connected IG)
+pixel_id: "000000000000"      # Meta Pixel / dataset ID (for the website audience)
+
+# Optional age bounds for the cold + broad saved audiences
+age_min: 18
+age_max: 65
+
+# ---- Cold audience interests ------------------------------------------------
+# Pull 15-20 interests from the approved Target Audience Profile, section 13
+# ("Where To Reach Them"). Use plain words; the tool resolves them to Meta
+# interest IDs and reports any it can't match so you can rename them.
+cold_interests:
+  - "Entrepreneurship"
+  - "Small business"
+  - "Digital marketing"
+  - "Online advertising"
+  - "Real estate investing"
+  # - add the rest from the Target Audience Profile...
+
+# ---- Contact list uploads (OPTIONAL) ---------------------------------------
+# Point these at CSV exports (any columns; the tool finds email + phone and
+# SHA-256 hashes them before upload). Leave blank to skip those 2 audiences.
+csv_files:
+  ghl_leads: ""        # e.g. "data/acme-ghl-leads.csv"
+  past_customers: ""   # e.g. "data/acme-customers.csv"
