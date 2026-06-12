@@ -57,7 +57,10 @@
 /* ====== CONFIG ======
    When the Google Sheet backend is ready, paste its web-app URL here.
    Until then, answers save in the browser and can be downloaded as a file. */
-const SUBMIT_ENDPOINT = "/api/submit"; // our Vercel function → Supabase database
+// Supabase project (the "anon public" key is safe to expose — the database only allows
+// inserts with it, never reads; row-level security blocks reading other clients' data).
+const SUPABASE_URL = "https://hiqlubrygiprmelechza.supabase.co";
+const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhpcWx1YnJ5Z2lwcm1lbGVjaHphIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEyNzYzMTMsImV4cCI6MjA5Njg1MjMxM30.59FHO2xh9jTLsH0iCwuSWkoY_RKZNtqbukdUQEaCpuE";
 
 /* ====== QUESTIONS (all 68) ======
    type: text | email | tel | url | number | date | textarea | choice
@@ -266,19 +269,23 @@ function renderDone(){
 
 async function submitAll(){
   const status = document.getElementById("status");
-  const payload = {clientId, submittedAt: new Date().toISOString(), answers:
-    Object.fromEntries(Object.entries(answers).filter(([k])=>k[0]!=="_"))};
-  if(!SUBMIT_ENDPOINT){
-    // No backend yet: let them download their answers so nothing is lost.
-    const blob = new Blob([JSON.stringify(payload,null,2)],{type:"application/json"});
-    const a=document.createElement("a"); a.href=URL.createObjectURL(blob);
-    a.download = "esa-onboarding-"+clientId+".json"; a.click();
-    status.innerHTML = "Saved locally and downloaded a copy. <br/>(Backend not connected yet — once it is, this button sends straight to the team.)";
-    return;
-  }
+  const clean = Object.fromEntries(Object.entries(answers).filter(([k])=>k[0]!=="_"));
+  const row = {
+    client_id: clientId,
+    submitted_at: new Date().toISOString(),
+    company_name: clean.company_name || null,
+    email: clean.email || null,
+    event_name: clean.event_name || null,
+    answers: clean
+  };
   status.textContent = "Submitting...";
   try{
-    const r = await fetch(SUBMIT_ENDPOINT,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
+    const r = await fetch(SUPABASE_URL + "/rest/v1/onboarding_submissions", {
+      method:"POST",
+      headers:{ "apikey": SUPABASE_ANON, "Authorization":"Bearer "+SUPABASE_ANON,
+                "Content-Type":"application/json", "Prefer":"return=minimal" },
+      body: JSON.stringify(row)
+    });
     if(!r.ok) throw new Error("status "+r.status);
     answers.__submitted = true; localStorage.setItem(STORE_KEY, JSON.stringify(answers));
     status.innerHTML = "✓ Submitted — thank you! Our team has your answers.";
