@@ -1,0 +1,23 @@
+# macOS junk
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+
+# Editor/OS temp files
+*.swp
+*~
+.idea/
+.vscode/
+
+# Secrets — never commit API keys, tokens, passwords
+.env
+.env.*
+*.key
+secrets/
+
+# Dependencies / build output (for later, when we build the app)
+node_modules/
+dist/
+build/
+.next/
