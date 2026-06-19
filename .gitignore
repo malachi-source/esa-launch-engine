@@ -16,6 +16,14 @@ Icon
 *.key
 secrets/
 
+# Python sandboxes
+.venv/
+__pycache__/
+
+# Master brain — real client data. Track only the README.
+master-brain/*
+!master-brain/README.md
+
 # Dependencies / build output (for later, when we build the app)
 node_modules/
 dist/
