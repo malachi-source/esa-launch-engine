@@ -62,7 +62,7 @@
 const SUPABASE_URL = "https://hiqlubrygiprmelechza.supabase.co";
 const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhpcWx1YnJ5Z2lwcm1lbGVjaHphIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEyNzYzMTMsImV4cCI6MjA5Njg1MjMxM30.59FHO2xh9jTLsH0iCwuSWkoY_RKZNtqbukdUQEaCpuE";
 
-/* ====== QUESTIONS (all 68) ======
+/* ====== QUESTIONS (all 71) ======
    type: text | email | tel | url | number | date | textarea | choice
    For choice, provide options[]. */
 const SECTIONS = {
@@ -81,6 +81,9 @@ const Q = [
   // 2) Event
   {k:"event_name", s:"event", q:"What's the event name?", t:"text", req:true},
   {k:"website", s:"event", q:"Your website?", t:"url"},
+  {k:"linkedin_url", s:"event", q:"LinkedIn profile or company page?", t:"url", help:"Optional — paste the full URL if you have one."},
+  {k:"instagram_url", s:"event", q:"Instagram profile?", t:"url", help:"Optional — paste the full URL if you have one."},
+  {k:"facebook_url", s:"event", q:"Facebook page or profile?", t:"url", help:"Optional — paste the full URL if you have one."},
   {k:"event_location", s:"event", q:"Event location?", t:"text", req:true, help:"City/venue, or “online”"},
   {k:"event_date", s:"event", q:"Event date?", t:"date", req:true},
   {k:"target_attendees", s:"event", q:"How many attendees do you want?", t:"number", req:true, help:"Your fill goal"},
