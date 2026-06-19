@@ -25,7 +25,7 @@ Audience Profile prompt:
 ## Output it produces
 - Project Summary: one-page client/event summary (overview, event details, objectives, current situation, marketing needs, tech needs, risks, ESA action plan)
 - Event Summary: one-page event positioning doc (overview, what attendees learn, transformation/outcomes, why it matters, bonuses)
-- Audience Profile: up to 12-page copywriting-optimized audience profile (pain mining, desire mapping, belief systems, language/swipe files, objections, conversion triggers, media behavior, ideal avatar)
+- Audience Profile (TAP): 5-7 page Fortune 500 quality document. MUST follow reference/tap-formatting-standards.md — no section breaks across pages, branded design with client colors, premium layout.
 
 ## Status
 - [x] Prompt copied from the master Google Doc
@@ -33,4 +33,10 @@ Audience Profile prompt:
 - [ ] Tested with a real example
 
 ## Notes / decisions
-(empty for now)
+
+### TAP formatting rules (2026-06-18, from Malachi review)
+1. Sections never break across pages.
+2. 5-7 pages only (including cover).
+3. Fortune 500 design quality.
+4. Client brand colors from form fields 48-50.
+5. Full standards in reference/tap-formatting-standards.md.
