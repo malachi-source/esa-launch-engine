@@ -1,50 +1,57 @@
-# Ad Copy Standard (pass/fail + scoring rubric)
+# Ad Script Standard (pass/fail + scoring rubric)
 
-> The bar EVERY auto-generated set of ad copy must clear. The grader judges output
-> against this; the generate -> grade -> rewrite loop REPLACES human approval.
-> Model all output on `examples/ad-copy-swipe.md` (ESA's real, used ad copy).
+> The bar EVERY auto-generated set of ad scripts must clear. The grader judges
+> output against this; the generate -> grade -> rewrite loop REPLACES human approval.
+> Model all output on `examples/ad-scripts-swipe.md` (ESA's real, used ad scripts).
 > Inputs come from the client's MASTER_BRAIN (audience profile + event summary).
 
 ## The goal
-A no-human-approval machine: master brain in -> 10 finished ad copy variations out,
+A no-human-approval machine: master brain in -> 10 finished video ad scripts out,
 self-graded until they pass. No person signs off.
 
 ## Deliverable
-10 unique short-form ad copy variations (the written text beside/above the creative).
-Each 3 to 5 sentences, under 200 words.
+20 unique video ad scripts (10 ESA method + 10 industry-specific), each 45 to 60 seconds spoken (roughly 90 to 160 words).
 
-## REQUIRED elements (every variation)
-1. **Hook & pain** — a pain-based or curiosity-driven opening line that calls out a daily frustration.
-2. **Emotional connect + quick credibility** — empathy or insight, plus a light authority cue.
-3. **Sell the after** — paint the desired transformation (emotional, lifestyle), not features.
-4. **Offer + CTA** — the event in benefit language, with urgency or scarcity, ending on a confident CTA.
-5. **One embedded command used naturally** where it fits (e.g. "It's not your fault, but it is your responsibility").
+## REQUIRED elements (every script)
+1. **Scroll-stopping pain hook** in the first line. No "Hi, my name is."
+2. **Speaks to ONE person** ("you"), spoken-word, casual and human.
+3. **Empathy + quick credibility** (a relatable "I worked with people just like you" or a result).
+4. **A shift / mechanism** — the insight or system that reframes their problem.
+5. **Sell the after** — the identity-level transformation, not just features.
+6. **Event-anchored CTA** — names the real event, and drives to register/secure a seat with urgency or scarcity.
 
 ## SET-level requirement (across the 10)
-- 10 DISTINCT angles, not 10 rewordings.
-- Spread across Tai Lopez (curiosity / knowledge-gap), Russell Brunson (story / epiphany), Grant Cardone (authority / urgency).
+- 10 genuinely DISTINCT angles, not 10 rewordings of one idea.
+- Spread across the three styles: Tai Lopez (curiosity/story), Russell Brunson (frameworks/epiphany), Grant Cardone (authority/urgency).
+- Varied hooks (pain, curiosity, callout, question, contrarian).
 
 ## HARD GATES (any failure = auto-fail, rewrite required)
-1. Exactly 10 variations.
-2. Each is 3 to 5 sentences AND under 200 words.
-3. **Zero em dashes** anywhere (use periods or commas). Checked in code too.
-4. Speaks to one person ("you"), not a crowd.
-5. Meta compliant: no prohibited personal attributes ("you are", "you have"), no income or health claims, no before-and-after or misleading guarantees.
-6. Event-anchored CTA in every variation (names the event, drives to register).
-7. Mirrors the audience's real language from the master brain.
-8. No placeholders or "[fill in]" left anywhere.
-9. The 10 are distinct angles (no near-duplicates).
-10. No flat, generic lines. Every sentence earns the next.
+1. 20 scripts total (10 ESA method + 10 industry-specific). Scripts 11-20 must use completely different formats from 1-10.
+2. **Zero em dashes** anywhere (use periods or commas). This is checked in code too.
+3. Every script speaks to one person ("you"), never "you all" / "everyone."
+4. No script opens with a self-introduction ("Hi, my name is", "I'm X and").
+5. Meta compliant: no prohibited personal attributes ("you are broke", "you have debt"), no income or health guarantees, no before-and-after claims, no unrealistic guarantees.
+6. Each script names the real event and ends with a clear CTA.
+7. Uses the audience's REAL language from the master brain (verbatim phrases where possible).
+8. Each script reads as natural spoken word and fits 45 to 60 seconds.
+9. All 20 are distinct angles (no near-duplicates).
+10. No placeholders or "[fill in]" left anywhere.
+11. **Voice Lock verified** — Client Brain, social media samples, video transcripts, and form answers reviewed BEFORE generation. Scripts must sound like the client, not a copywriter.
+12. **Event Info PDF cross-checked** — All event details (name, date, location, pricing, offer, speakers) verified against the Event Info PDF before generation.
 
 ## RUBRIC (score each 1-5; ALL must be >= 4 to pass)
-1. Hook strength (scroll-stopping)
-2. Voice match (sounds like the real customer)
-3. Emotional pull
-4. Clarity and brevity (tight, under 200 words, 3-5 sentences)
+1. Hook strength (stops the scroll)
+2. Voice match (sounds like the real customer, not corporate)
+3. Pain resonance (they feel seen)
+4. Desire / identity pull (sells the after)
 5. Meta compliance
-6. CTA strength
+6. CTA clarity and pull
 7. Distinctiveness across the 10
-8. Identity / desire pull
+8. Spoken-flow naturalness
+
+## TRIGGER GATE
+Ad scripts only generate AFTER Malachi approves the Target Audience Profile (TAP) with a ✅ reaction.
+Required before generation: Brain complete ✅ + Event Info PDF complete ✅ + TAP approved ✅.
 
 ## THE LOOP THAT REPLACES APPROVAL
 ```
@@ -55,6 +62,7 @@ are 4 or 5.
 
 ## CORE PRINCIPLES
 - **Extract, do not invent:** pull the audience's exact words from the master brain.
-- **Tight and conversational:** short, human, no jargon, no fluff.
-- **Anchor to the event** and end on a confident CTA every time.
-- **Compliance is non-negotiable.**
+- **One person, spoken:** write for the ear, not the page.
+- **Every line earns the next:** no flat spots, momentum-driven.
+- **Anchor to the event:** name, date, city, CTA in every script.
+- **Compliance is non-negotiable:** a non-compliant script is a failed script.
