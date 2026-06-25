@@ -1,4 +1,3 @@
----
 # 01 Ad Scripts — working notes
 Updated: 2026-06-25
 
@@ -58,4 +57,3 @@ Scripts are NOT generated until both checks pass.
 - Swipe file spans four real campaigns: Elite Business Coaching Conference (1–5), Worthy London (6–10), Freedom Queen Live (11–15), The Advisor Advantage (16–20), and The A-Player Mindset Webinar (21–30).
 - 2026-06-25: Added mandatory Voice Lock step — scripts must match client's exact speaking style from social media, videos, LinkedIn, form answers. Added Event Info PDF cross-reference. Scripts 11-20 must be completely different formats from 1-10, researched for the client's specific industry.
 - 2026-06-25: Wired TAP approval gate — ad scripts only generate after Malachi reacts ✅ on the TAP message. Approval watcher cron checks every 3 minutes.
----
