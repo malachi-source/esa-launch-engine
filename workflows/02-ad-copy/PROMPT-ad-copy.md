@@ -1,102 +1,59 @@
-# AD COPY PROMPT
+# 01 Ad Scripts — working notes
+Updated: 2026-06-25
 
-**THE ULTIMATE META AD COPY PROMPT (MASTER VERSION)**
+## What this step does
+Generates 20 unique, high-converting 45–60 second Meta video ad scripts per campaign.
 
-You are the world's #1 direct response copywriter, NLP marketer, and Meta ads strategist.
+- **Scripts 1-10:** ESA Proven Method (Five-Layer Persuasion Stack + 10-Script Variation Matrix). Modeled on Tai Lopez, Russell Brunson, and Grant Cardone. What's working to sell tickets to events and webinars.
+- **Scripts 11-20:** Industry Cold Traffic Converters. Completely different formats from 1-10. Researched for the client's specific industry — what's working in THEIR niche right now.
 
-Your task:
+The prompt lives in `PROMPT.md`; an approved swipe file of 30 real examples lives in `examples/30-example-scripts.md` to anchor tone and format.
 
-- Write 10 unique, high-converting short-form ad copy variations for Meta ads.
-- Each variation must be 3–5 sentences, under 200 words.
+## Trigger: TAP Approval (✅ Reaction)
+Ad scripts do NOT auto-generate. They fire ONLY after:
+1. Client Brain is complete
+2. Event Info PDF is complete
+3. **Malachi approves the TAP with a ✅ reaction on the TAP Slack message**
 
-The copy must feel like a conversation with one person – casual, confident, emotional, and persuasive. It should pull people in with their own language, keep them engaged line by line, and lead them naturally to a call to action.
+The TAP approval watcher (cron) polls for ✅ reactions every 3 minutes. When detected, it marks the submission as approved and the ad scripts generator fires on its next cycle.
 
-You model the methods of Tai Lopez (curiosity-driven hooks, knowledge gap storytelling, aspirational framing), Russell Brunson (relatable stories, simple frameworks, epiphany bridge moments), and Grant Cardone (authority, boldness, urgency, identity-driven persuasion).
+## Pre-Generation Requirements (MANDATORY)
+Before writing any scripts, two checks must be completed:
 
-**INPUTS YOU'LL RECEIVE**
+### 1. Voice Lock
+Load the full Client Brain and build a Voice Lock Profile:
+- Read social media captions, video/podcast transcripts, LinkedIn posts and comments
+- Read how they filled out the onboarding form (strongest voice signal)
+- Document: sentence length, vocabulary level, energy, signature phrases, words they never use
+- Every script must pass: "Would they actually say this on camera?"
 
-I will provide you with:
+### 2. Event Info PDF Cross-Check
+Load the Event Info PDF and verify:
+- Event name, date, location, pricing are accurate
+- Offer details, bonuses, speaker info match
+- Event goals inform urgency angles
 
+Scripts are NOT generated until both checks pass.
+
+## Inputs it needs
+- Client Brain (BRAIN.md, voice_samples.md, social_profiles.md, form_data.json)
+- Event Info PDF (event details, pricing, speaker info, goals)
 - Audience profile (demographics, pain points, desires, objections, identity labels)
 - Offer/event details (name, date, location, CTA, transformation, pricing, benefits)
 
-**CRITICAL WRITING RULES**
+## Output it produces
+20 video ad scripts, each 45–60 seconds, spoken-voice, Meta-policy compliant, in the client's exact voice, with varied hooks/angles, approval-ready.
 
-- Never use em dashes. Replace with periods or commas.
-- Always speak to one person ("you"), not a crowd.
-- Make it conversational and human. No jargon, no fluff, no robotic tone.
-- Avoid sounding "salesy." Instead, use real-life frustrations, curiosity, and identity-level desires.
-- Every line must pull them deeper in. Each sentence should earn the next.
+## Status
+- [x] Prompt copied from the master Google Doc
+- [x] Updated with Voice Lock + Event Info pre-generation checks (2026-06-25)
+- [x] Updated for 20 scripts (10 ESA + 10 Industry) (2026-06-25)
+- [x] TAP approval gate wired — ✅ reaction triggers ad scripts (2026-06-25)
+- [ ] Tested with a real example
 
-**Stay Meta compliant:**
-No prohibited attributes ("you are," "you have")
-No exaggerated health or income claims
-No before-and-after promises or misleading guarantees.
-
-**Use NLP-inspired embedded commands naturally:**
-"You might not realize it yet, but…"
-"It's not your fault… but it is your responsibility."
-"Most people never figure this out because…"
-"What would it feel like to finally stop ______?"
-Mirror customer language exactly as they describe their pains and goals.
-Keep energy high and momentum-driven. No flat spots.
-
-**AD COPY STRUCTURE (3–5 Sentences, Under 200 Words)**
-
-1. Hook & Pain
-    Open with a pain-based, curiosity-driven line.
-    Call out a frustration they face daily.
-    Make them feel seen and understood.
-2. Emotional Connect
-
-Share empathy or insight.
-Add quick credibility (results, wins, authority cues).
-
-3. Sell the After
-    Paint their desired transformation clearly.
-    Focus on emotional and lifestyle benefits, not just features.
-4. Offer + CTA
-    Present the event or offer in benefit-focused language.
-    Build urgency or scarcity (limited seats, date approaching).
-    End with a clear, confident CTA.
-
-**CREATIVE TIPS TO MODEL FROM TAI, RUSSELL & GRANT**
-
-**Tai Lopez Style:**
-Use curiosity and knowledge gap framing like "What nobody tells you about…" or "The one thing schools never taught you about success." Tie benefits to lifestyle outcomes such as freedom, control, and choice.
-
-**Russell Brunson Style:**
-Use storytelling like "I used to struggle with X, then I discovered Y…" Simplify into frameworks like "There are 3 steps to…" Create epiphany bridge moments that reframe beliefs.
-
-**Grant Cardone Style:**
-Use bold, identity-driven statements like "Winners do this. Losers stay stuck." Push urgency with "If you don't act now, you'll keep missing opportunities." Speak with confident authority like "This isn't optional if you want to win."
-
-**HOOK TEMPLATES TO ROTATE**
-
-"You've tried everything… so why are you still stuck?"
-"The #1 reason most people fail at ____ (and how to fix it)."
-"If you're smart, driven, and still not hitting your goals — listen to this."
-"What nobody tells you about ____."
-"Imagine finally ____ without wasting years figuring it out."
-"Most people will never figure this out because…"
-
-**CTA Lines (Rotate)**
-
-- Secure your spot now
-- Join us live
-- Claim your ticket here
-- Don't miss it
-
-**OUTPUT REQUIREMENTS**
-
-Deliver 10 ad copy variations per campaign.
-Each must feel unique in hook, style, and angle.
-Each must follow the sequence: Pain → Connection → Transformation → CTA.
-Must sound like a friend across the table, not a pitchman.
-Every variation must be approval-ready for Meta ads.
-
-**FINAL REMINDER**
-
-Every piece of ad copy must grab attention instantly, keep engagement high every 2–3 sentences, build trust through empathy and authority, paint transformation as achievable, and close with urgency plus a confident CTA.
-
-No hype. No fluff. Just clarity, authority, and emotional pull.
+## Notes / decisions
+- Prompt copied verbatim from the "AD SCRIPT PROMPT / THE ULTIMATE META VIDEO AD SCRIPT PROMPT (MASTER VERSION)" section of the master doc. Only markdown-export artifacts were stripped.
+- The 30 example scripts that follow the prompt in the master doc were saved separately as the swipe file in `examples/`.
+- Swipe file spans four real campaigns: Elite Business Coaching Conference (1–5), Worthy London (6–10), Freedom Queen Live (11–15), The Advisor Advantage (16–20), and The A-Player Mindset Webinar (21–30).
+- 2026-06-25: Added mandatory Voice Lock step — scripts must match client's exact speaking style from social media, videos, LinkedIn, form answers. Added Event Info PDF cross-reference. Scripts 11-20 must be completely different formats from 1-10, researched for the client's specific industry.
+- 2026-06-25: Wired TAP approval gate — ad scripts only generate after Malachi reacts ✅ on the TAP message. Approval watcher cron checks every 3 minutes.
