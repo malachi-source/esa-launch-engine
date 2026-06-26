@@ -4,6 +4,29 @@
 
 ---
 
+## 0. WHERE THESE FILES LIVE (GitHub — source of truth)
+
+All Viktor specs live in GitHub repo **`malachi-source/esa-launch-engine`**, branch **`main`**, under `workflows/`. This is the source of truth — read the spec from here before running any task.
+
+| What | Path |
+|---|---|
+| System docs | `workflows/_system/` → `SKILL.md` (this file), `orchestration_logic.md`, `drive_folder_sop.md` |
+| Client Brain Builder | `workflows/00-client-brain/client_brain_builder.md` |
+| Ad Copy | `workflows/02-ad-copy/ad_copy_master_prompt.md` |
+| VSL | `workflows/03-vsl/vsl_master_prompt.md` |
+| FB Lead Form | `workflows/09-fb-lead-form/fb_lead_form_master_prompt.md` |
+| Reactivation Emails | task brief `workflows/10-reactivation-emails/10-reactivation-emails.task.md` · master prompt `workflows/reactivation-emails/reactivation_emails_master_prompt.md` |
+| Re-Engagement Texts | `workflows/11-reengagement-texts/11-reengagement-texts.task.md` |
+| Phone Script | `workflows/12-phone-script/12-phone-script.task.md` |
+| Social Media Scripts | `workflows/08-social-media/08-social-media.task.md` |
+| Confirmation | `workflows/confirmation/confirmation_master_prompt.md` |
+
+**Two cautions when reading a folder:**
+- Some folders (`02-ad-copy`, `03-vsl`, `09-fb-lead-form`, `08-social-media`) also contain an older `PROMPT*.md` / `*_STANDARD.md` from a separate build. For Viktor tasks, always use the **`*_master_prompt.md`** (or `*.task.md`) file — never the `PROMPT*.md`.
+- Reactivation Emails is currently split: the human brief lives in `10-reactivation-emails/` and the generation spec in `reactivation-emails/`. Read both; the `*_master_prompt.md` is authoritative for generation.
+
+---
+
 ## 1. WHAT THIS IS
 
 An end-to-end pipeline that takes a new client from onboarding to a complete set of event-marketing assets — ad scripts, ad copy, VSLs, a Facebook lead form, reactivation and confirmation messaging, a phone script, and the supporting event collateral — all written in the client's own voice and gated by a single human approval.
