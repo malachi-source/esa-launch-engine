@@ -75,4 +75,4 @@
   never split even if content runs long.
 
 ## Repo
-- Path: `workflows/14-social-scripts/`
+- Path: `workflows/08-social-media/`
